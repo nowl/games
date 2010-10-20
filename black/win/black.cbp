@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="black" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="black" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="black" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="SDL\include" />
+			<Add directory="SDL\include\SDL" />
+			<Add directory="SDL_ttf-2.0.9" />
+			<Add directory="SDL_image-1.2.10" />
+			<Add directory="..\black\include" />
+			<Add directory="sdl_mixer\includes" />
+		</Compiler>
+		<Linker>
+			<Add option="-lmingw32" />
+			<Add library="SDL\lib\libSDLmain.a" />
+			<Add library="SDL\lib\libSDL.dll.a" />
+			<Add library="libsdl_ttf.a" />
+			<Add library="liblua.a" />
+			<Add library="SDL_image-1.2.10\lib\libSDL_image.a" />
+			<Add library="sdl_mixer\SDL_mixer.dll" />
+			<Add directory="..\win" />
+		</Linker>
+		<Unit filename="..\black\include\astar.h" />
+		<Unit filename="..\black\include\black.h" />
+		<Unit filename="..\black\include\collide.h" />
+		<Unit filename="..\black\include\event_queue.h" />
+		<Unit filename="..\black\include\font.h" />
+		<Unit filename="..\black\include\game_manager.h" />
+		<Unit filename="..\black\include\game_object.h" />
+		<Unit filename="..\black\include\game_state.h" />
+		<Unit filename="..\black\include\game_state_interface.h" />
+		<Unit filename="..\black\include\image_loader.h" />
+		<Unit filename="..\black\include\image_render_set.h" />
+		<Unit filename="..\black\include\list.h" />
+		<Unit filename="..\black\include\message.h" />
+		<Unit filename="..\black\include\message_handler_interface.h" />
+		<Unit filename="..\black\include\queue.h" />
+		<Unit filename="..\black\include\renderable_interface.h" />
+		<Unit filename="..\black\include\sdl_font.h" />
+		<Unit filename="..\black\include\sdl_graphics_context.h" />
+		<Unit filename="..\black\include\sdl_sound.h" />
+		<Unit filename="..\black\include\splay.h" />
+		<Unit filename="..\black\include\tree.h" />
+		<Unit filename="..\black\include\types.h" />
+		<Unit filename="..\black\include\updateable_interface.h" />
+		<Unit filename="..\black\include\utils.h" />
+		<Unit filename="..\black\src\astar.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\collide.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\event_queue.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\font.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\game_manager.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\game_object.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\game_state.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\image_loader.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\image_render_set.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\mainloop.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\message.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\sdl_font.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\sdl_graphics_context.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\sdl_sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\black\src\utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

@@ -1,0 +1,13 @@
+deforium
+
+This was a simple game I developed primarily in order to better learn Boost in combination with C++. The goal is to navigate through a maze of obstructions while avoiding the little green monsters to make it to the end of the level in the lower right. Deforium increases over time and allows the player to turn into a ghost by pressing the space bar. This will allow the player to walk through walls in order to aid them in reaching the end. Score also increases over time to a maximum for each level. Reaching the end of the level will add more monsters to the level and start the player over at the beginning. Getting hit by a monster will decrease the number of lives and star the player at the beginning of the level.
+
+This is meant to be a playable alpha version so there are a variety of existing bugs in the game. A gameplay demo can be found here: http://www.youtube.com/watch?v=AkCHX-rwLKs
+
+maze-render
+
+This is a demo of a 1980's style maze rendering game akin to Dungeon Master, Dungeon Hack, Wizardry, etc. It is programmed in C using the SDL and SDL_image libraries.
+
+canvas-space-shooter
+
+A simple example of a space shooter in an html canvas widget. The javascript and html code is generated using Common Lisp with the very useful Parenscript and cl-who libraries.

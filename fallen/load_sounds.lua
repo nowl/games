@@ -1,0 +1,6 @@
+bl.sound.load("media/sounds/shoot.wav", "fire")
+bl.sound.load("media/sounds/drop1.wav", "mob-drop")
+bl.sound.load("media/sounds/energy_gain.wav", "energy-gain")
+bl.sound.load("media/sounds/explode1.wav", "mob-explode")
+bl.sound.load("media/sounds/explode2.wav", "player-hit")
+bl.sound.load("media/sounds/player_die.wav", "player-die")

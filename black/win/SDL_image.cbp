@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="SDL_image" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="SDL_image" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-DBUILD_DLL" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="user32" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="SDL_image" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wall" />
+					<Add option="-DBUILD_DLL" />
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="user32" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add directory="SDL\include\SDL" />
+		</Compiler>
+		<Linker>
+			<Add library="SDL\lib\libSDLmain.a" />
+			<Add library="SDL\lib\libSDL.dll.a" />
+		</Linker>
+		<Unit filename="SDL_image-1.2.10\IMG.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_ImageIO.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_bmp.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_gif.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_jpg.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_lbm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_pcx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_png.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_pnm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_tga.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_tif.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_xcf.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_xpm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_xv.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\IMG_xxx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="SDL_image-1.2.10\SDL_image.h" />
+		<Unit filename="SDL_image-1.2.10\showimage.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

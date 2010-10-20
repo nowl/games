@@ -1,0 +1,70 @@
+import os
+import commands
+sdlCFlags = commands.getoutput('sdl-config --cflags')
+
+env = Environment()
+debug = ARGUMENTS.get('debug', 0)
+if int(debug):
+    env.Append(CCFLAGS = '-g')
+else:
+    env.Append(CCFLAGS = '-O2')
+
+profile = ARGUMENTS.get('profile', 0)
+if int(profile):
+    env.Append(CCFLAGS = '-pg')
+	# TODO: need to add this to linker flags somehow?
+    #env.Append(LDFLAGS = '-pg')
+               
+env.Append(CCFLAGS = '-Wall %s' % sdlCFlags)
+
+#source = [#'main.cpp',
+#    'test.cpp',
+#    'SDLGraphicsEngine.cpp',
+#    'SDLUpdateEngine.cpp',
+#    'render.cpp',
+#    'Log.cpp',
+#    'MapTerrain.cpp',
+#    'globals.cpp',
+#    'Map.cpp']
+
+#path_source = ['test.cpp',
+#	       'Log.cpp',
+#	       'Map.cpp',
+#               'MapTerrain.cpp',
+#               'PathFinding.cpp']
+
+source = ['map.cpp',
+          'main.cpp',
+          'Log.cpp',
+          'SDLGraphicsEngine.cpp',
+          'SDLUpdateEngine.cpp',
+          'render.cpp',
+          'update.cpp',
+          'GameState.cpp',
+          'Scenegraph.cpp',
+          'GraphicsCache.cpp',
+          'MapBuilder.cpp',
+          'GameObject.cpp',
+          'Event.cpp',
+          'EventProcessor.cpp',
+          'Geometry.cpp',
+          'MapView.cpp',
+          'CreatureUnit.cpp',
+          'PlayerUnit.cpp',
+          'ImageBackedGameObject.cpp',
+          'RIBGameObject.cpp',
+          'MUGameObject.cpp',
+          'MapGameObject.cpp',
+          'FontCache.cpp',
+          'Random.cpp']
+
+buildDirSources = ['build/' + s for s in source]
+
+#env.Program('main', source, LIBS=['SDL', 'SDL_image', 'boost_filesystem-mt', 'boost_date_time'])
+#env.Program('test', path_source, LIBS=['boost_filesystem-mt', 'boost_date_time'])
+
+env.BuildDir('build/', '.', duplicate=0)
+
+env.Program('main', buildDirSources, LIBS=['boost_filesystem-mt', 'boost_signals-mt', 'boost_date_time-mt', 'SDL', 'SDL_image', 'SDL_ttf'])
+
+

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="fallen.cbp" active="1">
+			<Depends filename="black.cbp" />
+			<Depends filename="blacklua.cbp" />
+		</Project>
+		<Project filename="lua\lua.cbp" />
+		<Project filename="black.cbp" />
+		<Project filename="blacklua.cbp" />
+		<Project filename="freetype.cbp" />
+		<Project filename="sdl_ttf.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

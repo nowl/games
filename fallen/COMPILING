@@ -1,0 +1,13 @@
+You must first check out version 1.0 of black and black lua.
+
+git clone git://github.com/nowl/Black.git
+cd Black
+git checkout v_1_0
+cd ..
+
+Then make sure you have all of the necessary sdl dependencies:
+SDL
+SDL_mixer
+SDL_image
+
+now running make should work.
