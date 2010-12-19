@@ -26,11 +26,16 @@ class PlayerSprite (pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.dx = 0
         self.dy = 0
+        self.mapView = None
     
     def update(self, *args):
         if self.dx != 0 or self.dy != 0:
             movement = self.dx, self.dy
-            self.rect.move_ip(movement)
+            #self.rect.move_ip(movement)
+
+            if self.mapView:
+                self.mapView.moveView(self.dx, self.dy)
+
         #if self.rect.left < 0 or self.rect.right > 800:
         #    speed['dx'] = -speed['dx']
         #if self.rect.top < 0 or self.rect.bottom > 600:
@@ -110,7 +115,8 @@ class GameLoop (object):
         print astar.best_path(levelMap.getMapElement(0, 0),
                               levelMap.getMapElement(20, 20))
 
-        self.mapView = MapView(levelMap, self.imageCache)
+        self.mapView = MapView(levelMap, self.imageCache, pygame.Rect(0, 0, 800, 600), 32, 32)
+        self.playerSprite.mapView = self.mapView
 
         while 1:
             loops = 0

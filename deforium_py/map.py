@@ -1,4 +1,4 @@
-from pygame.sprite import Sprite, Group
+from pygame.sprite import Sprite, Group, Rect
 
 class MapElement (object):
     def __init__(self, x, y, mapElementCB = None):
@@ -76,21 +76,47 @@ class MapElementSprite (Sprite):
     def __init__(self, mapElement, imageCache):
         Sprite.__init__(self)
         self.mapElement = mapElement
-        x = self.mapElement.x
-        y = self.mapElement.y
         self.image = imageCache.getCachedSurface(self.mapElement.meta['image'])
-        self.rect = self.image.get_rect().move(x*32, y*32)
+        self.rect = self.image.get_rect()
+        pixelLocation = self.mapElement.meta['drawLocation']
+        self.rect.move_ip(*pixelLocation)
     
     def update(self, *args):
         pass
 
 class MapView (Group):
-    def __init__(self, map, imageCache):
+    def __init__(self, map, imageCache, rectPixelView, imWidth, imHeight):
         Group.__init__(self)
         self.map = map
+        self.imageCache = imageCache
+        self.imageSize = (imWidth, imHeight)
+        self.setView(rectPixelView)
 
+    def setView(self, rect):
+        self.view = rect
+        self._updateContainer()
+
+    def moveView(self, x, y):
+        self.view.move_ip(x, y)
+        self._updateContainer()
+
+    def _updateContainer(self):
+        self.empty()
+        
         sprites = []
-        for elem in map.map:
-            sprites.append(MapElementSprite(elem, imageCache))
+        count =0
+        for elem in self.map.map:
+            w = self.imageSize[0]
+            h = self.imageSize[1]
+            pixelX = elem.x * w
+            pixelY = elem.y * h
+            if pixelX+w >= self.view.left and pixelX <= self.view.right and pixelY+h >= self.view.top and pixelY <= self.view.bottom:
+                offsetX = self.view.left
+                offsetY = self.view.top
+                elem.meta['drawLocation'] = pixelX-offsetX, pixelY-offsetY
+                sprites.append(MapElementSprite(elem, self.imageCache))
+                count += 1
+        print count
         self.add(sprites)
+
                 
