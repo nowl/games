@@ -31,10 +31,21 @@ class PlayerSprite (pygame.sprite.Sprite):
     def update(self, *args):
         if self.dx != 0 or self.dy != 0:
             movement = self.dx, self.dy
-            #self.rect.move_ip(movement)
+            self.rect.move_ip(movement)
 
-            if self.mapView:
-                self.mapView.moveView(self.dx, self.dy)
+            #if self.mapView:
+            if self.rect.right > 700:
+                self.rect.move_ip(-100, 0)
+                self.mapView.moveView(100, 0)
+            if self.rect.bottom > 500:
+                self.rect.move_ip(0, -100)
+                self.mapView.moveView(0, 100)
+            if self.rect.left < 100:
+                self.rect.move_ip(100, 0)
+                self.mapView.moveView(-100, 0)
+            if self.rect.top < 100:
+                self.rect.move_ip(0, 100)
+                self.mapView.moveView(0, -100)            
 
         #if self.rect.left < 0 or self.rect.right > 800:
         #    speed['dx'] = -speed['dx']
@@ -74,7 +85,7 @@ class GameLoop (object):
         for event in pygame.event.get():
             if event.type == pygame.QUIT: sys.exit()
             
-            speed = 4
+            speed = 5
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
@@ -106,7 +117,7 @@ class GameLoop (object):
         renderClock = pygame.time.Clock()
         updateTick = 0
 
-        levelMap = Map(40, 40, mapElementCB = initMapElement)
+        levelMap = Map(50, 50, mapElementCB = initMapElement)
 
         astar = AStar(levelMap.getSquareAdjacencies,
                       lambda elem: getCost(levelMap, elem),
