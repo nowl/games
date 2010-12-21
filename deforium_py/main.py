@@ -42,15 +42,25 @@ class PlayerSprite (pygame.sprite.Sprite):
         self.rect.move_ip(-self.mapView.offsetX, -self.mapView.offsetY)
             
     def update(self, *args):
-        #needsUpdate = False
+        needsUpdate = False
         
-        if self.dx != 0 or self.dy != 0:
-            self._modifyLocation(self.dx, self.dy)
+        if self.dx != 0:
+            needsUpdate = True
+            self._modifyLocation(self.dx, 0)
             
             for sprite in self.mapView:
                 if self.collideFunc(self, sprite) and isImpassable(sprite.mapElement):
-                    self._modifyLocation(-self.dx, -self.dy)
-        
+                    self._modifyLocation(-self.dx, 0)
+
+        if self.dy != 0:
+            needsUpdate = True
+            self._modifyLocation(0, self.dy)
+            
+            for sprite in self.mapView:
+                if self.collideFunc(self, sprite) and isImpassable(sprite.mapElement):
+                    self._modifyLocation(0, -self.dy)
+            
+        if needsUpdate:
             imWidth, imHeight = self.mapView.imageSize
             if self.mapView.view.right < self.mapView.map.width * imWidth and self.rect.right > self.screenRect.width-100:
                 self.mapView.moveView(imWidth * 6, 0)
@@ -105,22 +115,22 @@ class GameLoop (object):
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
                 elif event.key == pygame.K_a:
-                    self.playerSprite.dx = -speed
+                    self.playerSprite.dx -= speed
                 elif event.key == pygame.K_d:
-                    self.playerSprite.dx = speed
+                    self.playerSprite.dx += speed
                 elif event.key == pygame.K_w:
-                    self.playerSprite.dy = -speed
+                    self.playerSprite.dy -= speed
                 elif event.key == pygame.K_s:
-                    self.playerSprite.dy = speed
+                    self.playerSprite.dy += speed
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_a:
-                    self.playerSprite.dx = 0
+                    self.playerSprite.dx += speed
                 elif event.key == pygame.K_d:
-                    self.playerSprite.dx = 0
+                    self.playerSprite.dx -= speed
                 elif event.key == pygame.K_w:
-                    self.playerSprite.dy = 0
+                    self.playerSprite.dy += speed
                 elif event.key == pygame.K_s:
-                    self.playerSprite.dy = 0
+                    self.playerSprite.dy -= speed
 
         self.mapView.update()
         self.sprites.update()
