@@ -29,19 +29,28 @@ class PlayerSprite (pygame.sprite.Sprite):
         self.location = [0, 0]
         self.mapView = None
         self.screenRect = screenRect
-    
-    def update(self, *args):
-        if self.dx != 0 or self.dy != 0:
-            self.location[0] += self.dx
-            self.location[1] += self.dy
-            self.rect.left = self.location[0]
-            self.rect.top = self.location[1]
-            self.rect.clamp_ip(self.mapView.worldRect)
-            self.location[0] = self.rect.left
-            self.location[1] = self.rect.top
-            self.rect.move_ip(-self.mapView.offsetX, -self.mapView.offsetY)
+        self.collideFunc = pygame.sprite.collide_rect_ratio(0.8)
 
-            #if self.mapView:
+    def _modifyLocation(self, x, y):
+        self.location[0] += x
+        self.location[1] += y
+        self.rect.left = self.location[0]
+        self.rect.top = self.location[1]
+        self.rect.clamp_ip(self.mapView.worldRect)
+        self.location[0] = self.rect.left
+        self.location[1] = self.rect.top
+        self.rect.move_ip(-self.mapView.offsetX, -self.mapView.offsetY)
+            
+    def update(self, *args):
+        #needsUpdate = False
+        
+        if self.dx != 0 or self.dy != 0:
+            self._modifyLocation(self.dx, self.dy)
+            
+            for sprite in self.mapView:
+                if self.collideFunc(self, sprite) and isImpassable(sprite.mapElement):
+                    self._modifyLocation(-self.dx, -self.dy)
+        
             imWidth, imHeight = self.mapView.imageSize
             if self.mapView.view.right < self.mapView.map.width * imWidth and self.rect.right > self.screenRect.width-100:
                 self.mapView.moveView(imWidth * 6, 0)
@@ -56,10 +65,6 @@ class PlayerSprite (pygame.sprite.Sprite):
                 self.mapView.moveView(0, -imHeight * 4)
                 self.rect.move_ip(0, -imHeight * 4)
 
-        #if self.rect.left < 0 or self.rect.right > 800:
-        #    speed['dx'] = -speed['dx']
-        #if self.rect.top < 0 or self.rect.bottom > 600:
-        #    speed['dy'] = -speed['dy']
 
 class GameLoop (object):
     def __init__(self, ticks_per_second, max_frame_skip):
