@@ -78,7 +78,7 @@ class MapElementSprite (Sprite):
         self.mapElement = mapElement
         self.image = imageCache.getCachedSurface(self.mapElement.meta['image'])
         self.rect = self.image.get_rect()
-        pixelLocation = self.mapElement.meta['drawLocation']
+        pixelLocation = self.mapElement.meta['screenLocation']
         self.rect.move_ip(*pixelLocation)
     
     def update(self, *args):
@@ -88,35 +88,43 @@ class MapView (Group):
     def __init__(self, map, imageCache, rectPixelView, imWidth, imHeight):
         Group.__init__(self)
         self.map = map
+        self.worldRect = Rect(0, 0, self.map.width * imWidth, self.map.height * imHeight)
         self.imageCache = imageCache
         self.imageSize = (imWidth, imHeight)
-        self.setView(rectPixelView)
+        self.offsetX = 0
+        self.offsetY = 0
+        self.setView(rectPixelView)        
 
     def setView(self, rect):
         self.view = rect
+        self.view.clamp_ip(self.worldRect)
+
+        self.offsetX = self.view.left
+        self.offsetY = self.view.top
+        
         self._updateContainer()
 
     def moveView(self, x, y):
         self.view.move_ip(x, y)
+        self.view.clamp_ip(self.worldRect)
+
+        self.offsetX = self.view.left
+        self.offsetY = self.view.top
+        
         self._updateContainer()
 
     def _updateContainer(self):
         self.empty()
         
         sprites = []
-        count =0
         for elem in self.map.map:
             w = self.imageSize[0]
             h = self.imageSize[1]
             pixelX = elem.x * w
             pixelY = elem.y * h
             if pixelX+w >= self.view.left and pixelX <= self.view.right and pixelY+h >= self.view.top and pixelY <= self.view.bottom:
-                offsetX = self.view.left
-                offsetY = self.view.top
-                elem.meta['drawLocation'] = pixelX-offsetX, pixelY-offsetY
+                elem.meta['screenLocation'] = pixelX-self.offsetX, pixelY-self.offsetY
                 sprites.append(MapElementSprite(elem, self.imageCache))
-                count += 1
-        print count
         self.add(sprites)
 
                 

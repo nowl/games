@@ -20,32 +20,41 @@ def initMapElement(elem):
                  'cost': 10}
 
 class PlayerSprite (pygame.sprite.Sprite):
-    def __init__(self, ballimg):
+    def __init__(self, ballimg, screenRect):
         pygame.sprite.Sprite.__init__(self)
         self.image = ballimg
         self.rect = self.image.get_rect()
         self.dx = 0
         self.dy = 0
+        self.location = [0, 0]
         self.mapView = None
+        self.screenRect = screenRect
     
     def update(self, *args):
         if self.dx != 0 or self.dy != 0:
-            movement = self.dx, self.dy
-            self.rect.move_ip(movement)
+            self.location[0] += self.dx
+            self.location[1] += self.dy
+            self.rect.left = self.location[0]
+            self.rect.top = self.location[1]
+            self.rect.clamp_ip(self.mapView.worldRect)
+            self.location[0] = self.rect.left
+            self.location[1] = self.rect.top
+            self.rect.move_ip(-self.mapView.offsetX, -self.mapView.offsetY)
 
             #if self.mapView:
-            if self.rect.right > 700:
-                self.rect.move_ip(-100, 0)
-                self.mapView.moveView(100, 0)
-            if self.rect.bottom > 500:
-                self.rect.move_ip(0, -100)
-                self.mapView.moveView(0, 100)
-            if self.rect.left < 100:
-                self.rect.move_ip(100, 0)
-                self.mapView.moveView(-100, 0)
-            if self.rect.top < 100:
-                self.rect.move_ip(0, 100)
-                self.mapView.moveView(0, -100)            
+            imWidth, imHeight = self.mapView.imageSize
+            if self.mapView.view.right < self.mapView.map.width * imWidth and self.rect.right > self.screenRect.width-100:
+                self.mapView.moveView(imWidth * 6, 0)
+                self.rect.move_ip(imWidth * 6, 0)
+            if self.mapView.view.bottom < self.mapView.map.height * imHeight and self.rect.bottom > self.screenRect.height-100:
+                self.mapView.moveView(0, imHeight * 4)
+                self.rect.move_ip(0, imHeight * 4)
+            if self.mapView.offsetX > 0 and self.rect.left < 100:
+                self.mapView.moveView(-imWidth * 6, 0)
+                self.rect.move_ip(-imWidth * 6, 0)
+            if self.mapView.offsetY > 0 and self.rect.top < 100:
+                self.mapView.moveView(0, -imHeight * 4)
+                self.rect.move_ip(0, -imHeight * 4)
 
         #if self.rect.left < 0 or self.rect.right > 800:
         #    speed['dx'] = -speed['dx']
@@ -70,7 +79,7 @@ class GameLoop (object):
         self.imageCache.getSurface("terrains/Impassable1.jpg", "impassable-1")
         ball = self.imageCache.getCachedSurface("ball")
 
-        self.playerSprite = PlayerSprite(ball)
+        self.playerSprite = PlayerSprite(ball, pygame.Rect(0, 0, width, height))
         self.sprites = pygame.sprite.Group(self.playerSprite)
         self.mapView = None
 
