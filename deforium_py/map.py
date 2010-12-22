@@ -64,14 +64,7 @@ class Map (object):
                 results.append(self.getMapElement(point[0], point[1]))
 
         return results
-
-
-    #def addChangeListener(self, listener):
-    #    self._changeListeners.append(listener)
-    #def _updateChangeListeners(self):
-    #    for listener in self._changeListeners:
-    #        listener()
-
+  
 class MapElementSprite (Sprite):
     def __init__(self, mapElement, imageCache):
         Sprite.__init__(self)
@@ -87,13 +80,14 @@ class MapElementSprite (Sprite):
 class MapView (Group):
     def __init__(self, map, imageCache, rectPixelView, imWidth, imHeight):
         Group.__init__(self)
+        self._changeListeners = []
         self.map = map
         self.worldRect = Rect(0, 0, self.map.width * imWidth, self.map.height * imHeight)
         self.imageCache = imageCache
         self.imageSize = (imWidth, imHeight)
         self.offsetX = 0
         self.offsetY = 0
-        self.setView(rectPixelView)        
+        self.setView(rectPixelView)
 
     def setView(self, rect):
         self.view = rect
@@ -103,6 +97,7 @@ class MapView (Group):
         self.offsetY = self.view.top
         
         self._updateContainer()
+        self._updateChangeListeners(rect.left, rect.top)
 
     def moveView(self, x, y):
         self.view.move_ip(x, y)
@@ -112,6 +107,7 @@ class MapView (Group):
         self.offsetY = self.view.top
         
         self._updateContainer()
+        self._updateChangeListeners(self.offsetX, self.offsetY)
 
     def _updateContainer(self):
         self.empty()
@@ -126,5 +122,13 @@ class MapView (Group):
                 elem.meta['screenLocation'] = pixelX-self.offsetX, pixelY-self.offsetY
                 sprites.append(MapElementSprite(elem, self.imageCache))
         self.add(sprites)
+
+    def addChangeListener(self, listener):
+        self._changeListeners.append(listener)
+
+    def _updateChangeListeners(self, *args):
+        for listener in self._changeListeners:
+            listener(*args)
+
 
                 

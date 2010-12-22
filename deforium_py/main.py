@@ -3,7 +3,7 @@ from map import Map, MapElement, MapView
 from astar import AStar
 from imagecache import ImageCache
 from maputils import getCost, getHeuristicCost, setCost, isImpassable
-from random import random
+from random import random, randint
 
 import sys, pygame
 
@@ -19,17 +19,12 @@ def initMapElement(elem):
                  'type': t,
                  'cost': 10}
 
-class PlayerSprite (pygame.sprite.Sprite):
-    def __init__(self, ballimg, screenRect):
+class MapSprite (pygame.sprite.Sprite):
+    def __init__(self, screenRect):
         pygame.sprite.Sprite.__init__(self)
-        self.image = ballimg
-        self.rect = self.image.get_rect()
-        self.dx = 0
-        self.dy = 0
         self.location = [0, 0]
         self.mapView = None
         self.screenRect = screenRect
-        self.collideFunc = pygame.sprite.collide_rect_ratio(0.8)
 
     def _modifyLocation(self, x, y):
         self.location[0] += x
@@ -40,7 +35,23 @@ class PlayerSprite (pygame.sprite.Sprite):
         self.location[0] = self.rect.left
         self.location[1] = self.rect.top
         self.rect.move_ip(-self.mapView.offsetX, -self.mapView.offsetY)
-            
+
+    def setMapView(self, mapView):
+        self.mapView = mapView
+        self.mapView.addChangeListener(self._mapViewChangeListener)
+
+    def _mapViewChangeListener(self, x, y):
+        raise NotImplementedError
+
+class PlayerSprite (MapSprite):
+    def __init__(self, img, screenRect):
+        MapSprite.__init__(self, screenRect)
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.dx = 0
+        self.dy = 0
+        self.collideFunc = pygame.sprite.collide_rect_ratio(0.8)
+
     def update(self, *args):
         needsUpdate = False
         
@@ -64,16 +75,87 @@ class PlayerSprite (pygame.sprite.Sprite):
             imWidth, imHeight = self.mapView.imageSize
             if self.mapView.view.right < self.mapView.map.width * imWidth and self.rect.right > self.screenRect.width-100:
                 self.mapView.moveView(imWidth * 6, 0)
-                self.rect.move_ip(imWidth * 6, 0)
             if self.mapView.view.bottom < self.mapView.map.height * imHeight and self.rect.bottom > self.screenRect.height-100:
                 self.mapView.moveView(0, imHeight * 4)
-                self.rect.move_ip(0, imHeight * 4)
             if self.mapView.offsetX > 0 and self.rect.left < 100:
                 self.mapView.moveView(-imWidth * 6, 0)
-                self.rect.move_ip(-imWidth * 6, 0)
             if self.mapView.offsetY > 0 and self.rect.top < 100:
                 self.mapView.moveView(0, -imHeight * 4)
-                self.rect.move_ip(0, -imHeight * 4)
+
+    def _mapViewChangeListener(self, x, y):
+        self.rect.move_ip(x, y)     
+
+class MobSprite (MapSprite):
+    def __init__(self, x, y, img, screenRect, astar, speed, player):
+        MapSprite.__init__(self, screenRect)
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.dx = 0
+        self.dy = 0
+        self.path = []
+        self.curPathElement = None
+        self.collideFunc = pygame.sprite.collide_rect_ratio(0.8)
+        self.location = [x, y]
+        self.rect.move_ip(x, y)
+        self.astar = astar
+        self.speed = speed
+        self.player = player
+
+    def update(self, *args):
+        if self.curPathElement:
+            x, y = self.location
+            dx, dy = self.curPathElement
+            if abs(x-dx) < self.speed and abs(y-dy) < self.speed:
+                self.curPathElement = None
+                self.dx, self.dy = 0, 0
+                
+            else:
+                if x < dx:
+                    self.dx = self.speed
+                elif x > dx:
+                    self.dx = -self.speed
+                if y < dy:
+                    self.dy = self.speed
+                elif y > dy:
+                    self.dy = -self.speed
+            
+        elif self.path:
+            imWidth, imHeight = self.mapView.imageSize
+            self.curPathElement = self.path.pop(0)
+            self.curPathElement = [self.curPathElement.x * imWidth, self.curPathElement.y * imHeight]
+        else:
+            imWidth, imHeight = self.mapView.imageSize
+            levelMap = self.mapView.map
+            x = self.location[0] / imWidth
+            y = self.location[1] / imHeight
+            playerX = self.player.location[0] / imWidth
+            playerY = self.player.location[1] / imHeight
+            self.path = self.astar.best_path(levelMap.getMapElement(x, y),
+                                             levelMap.getMapElement(playerX, playerY))
+
+        if self.dx != 0 or self.dy != 0:
+            self._modifyLocation(self.dx, self.dy)
+            
+    
+    def _mapViewChangeListener(self, x, y):
+        self.rect.left = self.location[0]
+        self.rect.top = self.location[1]
+        self.rect.move_ip(-x, -y)        
+
+def sprinkleMobs(num, maxSpeed, sprites, mapView, imageCache, screenRect, astar, player):
+    imWidth, imHeight = mapView.imageSize
+    for x in xrange(num):
+        mob = MobSprite(randint(0, mapView.map.width * imWidth),
+                        randint(0, mapView.map.height * imHeight),
+                        imageCache.getCachedSurface("mob"),
+                        screenRect,
+                        astar,
+                        random() * maxSpeed/2 + maxSpeed/2,
+                        player)
+
+        mob.setMapView(mapView)
+    
+        sprites.add(mob)    
 
 
 class GameLoop (object):
@@ -90,11 +172,13 @@ class GameLoop (object):
 
         self.imageCache = ImageCache()
         self.imageCache.getSurface("units/Player1.png", "ball")
+        self.imageCache.getSurface("units/Creature1.png", "mob")
         self.imageCache.getSurface("terrains/Normal.jpg", "normal")
         self.imageCache.getSurface("terrains/Impassable1.jpg", "impassable-1")
-        ball = self.imageCache.getCachedSurface("ball")
 
-        self.playerSprite = PlayerSprite(ball, pygame.Rect(0, 0, width, height))
+        ball = self.imageCache.getCachedSurface("ball")
+        self.screenRect = pygame.Rect(0, 0, width, height)
+        self.playerSprite = PlayerSprite(ball, self.screenRect)
         self.sprites = pygame.sprite.Group(self.playerSprite)
         self.mapView = None
 
@@ -102,7 +186,6 @@ class GameLoop (object):
         self.screen.fill(self.black)
         self.mapView.draw(self.screen)
         self.sprites.draw(self.screen)
-        #screen.blit(ball, ballrect)
         pygame.display.flip()
 
     def update(self):
@@ -141,17 +224,17 @@ class GameLoop (object):
         renderClock = pygame.time.Clock()
         updateTick = 0
 
-        levelMap = Map(50, 50, mapElementCB = initMapElement)
+        levelMap = Map(30, 30, mapElementCB = initMapElement)
 
         astar = AStar(levelMap.getSquareAdjacencies,
                       lambda elem: getCost(levelMap, elem),
                       lambda x, y: getHeuristicCost(levelMap, x, y),
                       isImpassable)
-        print astar.best_path(levelMap.getMapElement(0, 0),
-                              levelMap.getMapElement(20, 20))
 
         self.mapView = MapView(levelMap, self.imageCache, pygame.Rect(0, 0, 800, 600), 32, 32)
-        self.playerSprite.mapView = self.mapView
+        self.playerSprite.setMapView(self.mapView)
+
+        sprinkleMobs(10, 8, self.sprites, self.mapView, self.imageCache, self.screenRect, astar, self.playerSprite)
 
         while 1:
             loops = 0
