@@ -168,7 +168,7 @@ class GameLoop (object):
 
         size = width, height = 800, 600
         self.black = 0,0,0
-        self.screen = pygame.display.set_mode(size)
+        self.screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
 
         self.imageCache = ImageCache()
         self.imageCache.getSurface("units/Player1.png", "ball")
